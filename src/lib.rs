@@ -133,7 +133,7 @@ pub fn decode<M>(key: &str, token: String) -> Result<M> where M: Message {
     Message::decode_base64(message_base64)
 }
 
-
+/*
 impl Message for Messages {}
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -158,3 +158,4 @@ fn main() {
 
     println!("{:?}", result);
 }
+*/
