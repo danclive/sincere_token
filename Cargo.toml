@@ -1,0 +1,11 @@
+[package]
+name = "sincere_token"
+version = "0.1.0"
+authors = ["dangcheng <dangcheng@hotmail.com>"]
+
+[dependencies]
+ring = "0.9"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+base64 = "0.5"
