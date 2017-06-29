@@ -13,6 +13,8 @@ use serde::de::DeserializeOwned;
 use ring::digest;
 use ring::hmac;
 
+pub use error::Error;
+
 mod error;
 
 type Result<T> = result::Result<T, error::Error>;
