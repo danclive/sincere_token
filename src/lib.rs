@@ -1,5 +1,5 @@
 extern crate ring;
-extern crate base64;
+extern crate data_encoding;
 extern crate serde;
 extern crate serde_json;
 #[macro_use]
@@ -12,6 +12,8 @@ use serde::de::DeserializeOwned;
 
 use ring::digest;
 use ring::hmac;
+
+use data_encoding::base64url;
 
 pub use error::Error;
 
@@ -68,11 +70,11 @@ impl Header {
     }
 
     fn encode_base64(&self) -> Result<String> {
-        Ok(base64::encode_config(&self.to_string()?, base64::URL_SAFE_NO_PAD))
+        Ok(base64url::encode_nopad(self.to_string()?.as_bytes()))
     }
 
     fn decode_base64(base: &str) -> Result<Self> {
-        let _json = base64::decode_config(base, base64::URL_SAFE_NO_PAD)?;
+        let _json = base64url::encode_nopad(base.as_bytes()).into_bytes();
         Header::from_str(&String::from_utf8(_json)?)
     }
 }
@@ -87,11 +89,11 @@ pub trait Message: Serialize + DeserializeOwned {
     }
 
     fn encode_base64(&self) -> Result<String> {
-        Ok(base64::encode_config(&self.to_string()?, base64::URL_SAFE_NO_PAD))
+        Ok(base64url::encode_nopad(self.to_string()?.as_bytes()))
     }
 
     fn decode_base64(base: &str) -> Result<Self> {
-        let _json = base64::decode_config(base, base64::URL_SAFE_NO_PAD)?;
+        let _json = base64url::encode_nopad(base.as_bytes()).into_bytes();
         Message::from_str(&String::from_utf8(_json)?)
     }
 }
@@ -108,7 +110,7 @@ pub fn encode<M>(key: &str, message: M, alg: Algorithm) -> Result<String> where 
         unsigned_token.as_bytes()
     );
 
-    let signature_base64 = base64::encode_config(&signature, base64::URL_SAFE_NO_PAD);
+    let signature_base64 = base64url::encode_nopad(signature.as_ref());
 
     Ok(unsigned_token + "." + &signature_base64)
 }
@@ -129,7 +131,7 @@ pub fn decode<M>(key: &str, token: String) -> Result<M> where M: Message {
             key.as_bytes()
         ), 
         (header_base64.to_string() + "." + &message_base64).as_bytes(),
-        &base64::decode_config(token_split[2], base64::URL_SAFE_NO_PAD)?
+        &base64url::decode_nopad(token_split[2].as_bytes())?
     ).or(Err(error::JwtError::Verify))?;
 
     Message::decode_base64(message_base64)

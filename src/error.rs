@@ -4,7 +4,7 @@ use std::string;
 
 use serde_json;
 use ring;
-use base64;
+use data_encoding;
 
 #[derive(Debug)]
 pub enum JwtError {
@@ -32,7 +32,7 @@ impl error::Error for JwtError {
 pub enum Error {
     Json(serde_json::Error),
     Crypto(ring::error::Unspecified),
-    Base64(base64::DecodeError),
+    Base64(data_encoding::decode::Error),
     FromUtf8Error(string::FromUtf8Error),
     JwtError(JwtError)
 }
@@ -83,8 +83,8 @@ impl From<ring::error::Unspecified> for Error {
     }
 }
 
-impl From<base64::DecodeError> for Error {
-    fn from(err: base64::DecodeError) -> Self {
+impl From<data_encoding::decode::Error> for Error {
+    fn from(err: data_encoding::decode::Error) -> Self {
         Error::Base64(err)
     }
 }
