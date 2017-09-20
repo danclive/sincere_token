@@ -74,7 +74,7 @@ impl Header {
     }
 
     fn decode_base64(base: &str) -> Result<Self> {
-        let _json = base64url::encode_nopad(base.as_bytes()).into_bytes();
+        let _json = base64url::decode_nopad(base.as_bytes())?;
         Header::from_str(&String::from_utf8(_json)?)
     }
 }
@@ -93,7 +93,7 @@ pub trait Message: Serialize + DeserializeOwned {
     }
 
     fn decode_base64(base: &str) -> Result<Self> {
-        let _json = base64url::encode_nopad(base.as_bytes()).into_bytes();
+        let _json = base64url::decode_nopad(base.as_bytes())?;
         Message::from_str(&String::from_utf8(_json)?)
     }
 }
