@@ -32,7 +32,7 @@ impl error::Error for JwtError {
 pub enum Error {
     Json(serde_json::Error),
     Crypto(ring::error::Unspecified),
-    Base64(data_encoding::decode::Error),
+    Base64(data_encoding::DecodeError),
     FromUtf8Error(string::FromUtf8Error),
     JwtError(JwtError)
 }
@@ -83,8 +83,8 @@ impl From<ring::error::Unspecified> for Error {
     }
 }
 
-impl From<data_encoding::decode::Error> for Error {
-    fn from(err: data_encoding::decode::Error) -> Self {
+impl From<data_encoding::DecodeError> for Error {
+    fn from(err: data_encoding::DecodeError) -> Self {
         Error::Base64(err)
     }
 }

@@ -13,7 +13,7 @@ use serde::de::DeserializeOwned;
 use ring::digest;
 use ring::hmac;
 
-use data_encoding::base64url;
+use data_encoding::BASE64URL_NOPAD;
 
 pub use error::Error;
 
@@ -70,11 +70,11 @@ impl Header {
     }
 
     fn encode_base64(&self) -> Result<String> {
-        Ok(base64url::encode_nopad(self.to_string()?.as_bytes()))
+        Ok(BASE64URL_NOPAD.encode(self.to_string()?.as_bytes()))
     }
 
     fn decode_base64(base: &str) -> Result<Self> {
-        let _json = base64url::encode_nopad(base.as_bytes()).into_bytes();
+        let _json = BASE64URL_NOPAD.decode(base.as_bytes())?;
         Header::from_str(&String::from_utf8(_json)?)
     }
 }
@@ -89,11 +89,11 @@ pub trait Message: Serialize + DeserializeOwned {
     }
 
     fn encode_base64(&self) -> Result<String> {
-        Ok(base64url::encode_nopad(self.to_string()?.as_bytes()))
+        Ok(BASE64URL_NOPAD.encode(self.to_string()?.as_bytes()))
     }
 
     fn decode_base64(base: &str) -> Result<Self> {
-        let _json = base64url::encode_nopad(base.as_bytes()).into_bytes();
+        let _json = BASE64URL_NOPAD.decode(base.as_bytes())?;
         Message::from_str(&String::from_utf8(_json)?)
     }
 }
@@ -110,7 +110,7 @@ pub fn encode<M>(key: &str, message: M, alg: Algorithm) -> Result<String> where 
         unsigned_token.as_bytes()
     );
 
-    let signature_base64 = base64url::encode_nopad(signature.as_ref());
+    let signature_base64 = BASE64URL_NOPAD.encode(signature.as_ref());
 
     Ok(unsigned_token + "." + &signature_base64)
 }
@@ -131,7 +131,7 @@ pub fn decode<M>(key: &str, token: String) -> Result<M> where M: Message {
             key.as_bytes()
         ), 
         (header_base64.to_string() + "." + &message_base64).as_bytes(),
-        &base64url::decode_nopad(token_split[2].as_bytes())?
+        &BASE64URL_NOPAD.decode(token_split[2].as_bytes())?
     ).or(Err(error::JwtError::Verify))?;
 
     Message::decode_base64(message_base64)
