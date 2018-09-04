@@ -1,12 +1,12 @@
 [package]
 name          = "sincere_token"
-version       = "0.1.6"
+version       = "0.1.7"
 license       = "MIT"
 authors       = ["dangcheng <dangcheng@hotmail.com>"]
 description   = "token"
 
 [dependencies]
-ring = "0.12"
+ring = "0.13"
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
